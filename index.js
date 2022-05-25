@@ -24,12 +24,22 @@ async function run() {
 
         await client.connect();
         const productCollection = client.db('final-project').collection('products');
+        const reviewCollection = client.db('final-project').collection('reviews');
 
         // Getting all Products: (Shown at home page) 
         app.get('/products', async (req, res) => {
             const products = await productCollection.find({}).toArray();
 
             res.send(products);
+        });
+
+
+
+        // Getting all review: ( shown at home page )
+        app.get('/reviews', async (req, res) => {
+            const reviewData = await reviewCollection.find({}).toArray();
+
+            res.send(reviewData);
         });
 
     }
