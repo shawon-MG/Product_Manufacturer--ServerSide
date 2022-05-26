@@ -57,6 +57,13 @@ async function run() {
             res.send(purchaseData);
         });
 
+        app.get('/payment/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const oneProductPayment = await purchaseDataCollection.findOne(query);
+            res.send(oneProductPayment);
+        });
+
 
 
 
@@ -65,6 +72,13 @@ async function run() {
             const reviewData = await reviewCollection.find({}).toArray();
 
             res.send(reviewData);
+        });
+        // Posting a review: ( shown at home page. From dashboard data is sended)
+        app.post('/reviews', async (req, res) => {
+            const purchaseData = req.body;
+            const result = await reviewCollection.insertOne(purchaseData);
+
+            res.send(result);
         });
 
     }
