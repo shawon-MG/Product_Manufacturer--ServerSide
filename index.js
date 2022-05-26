@@ -25,6 +25,7 @@ async function run() {
         await client.connect();
         const productCollection = client.db('final-project').collection('products');
         const reviewCollection = client.db('final-project').collection('reviews');
+        const purchaseDataCollection = client.db('final-project').collection('purchaseProducts');
 
         // Getting all Products: (Shown at home page) 
         app.get('/products', async (req, res) => {
@@ -39,6 +40,23 @@ async function run() {
             const oneProduct = await productCollection.findOne(query);
             res.send(oneProduct);
         });
+
+
+
+        // Posting user's purchased information to DB : ( Shown at purchaseData collection in mongoDB)
+        app.post('/purchase', async (req, res) => {
+            const purchaseData = req.body;
+            const result = await purchaseDataCollection.insertOne(purchaseData);
+
+            res.send(result);
+        });
+        // Getting all purchased information : ( Shown at payment route/page)
+        app.get('/purchase', async (req, res) => {
+            const purchaseData = await purchaseDataCollection.find({}).toArray();
+
+            res.send(purchaseData);
+        });
+
 
 
 
