@@ -56,8 +56,18 @@ async function run() {
 
             res.send(purchaseData);
         });
+        // Deleting a purchased data : 
+        app.delete('/purchase/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const result = await purchaseDataCollection.deleteOne(filter);
 
-        app.get('/payment/:id', async (req, res) => {
+            res.send(result);
+        });
+
+
+
+        app.get('/purchase/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const oneProductPayment = await purchaseDataCollection.findOne(query);
