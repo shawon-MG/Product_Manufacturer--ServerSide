@@ -29,6 +29,9 @@ async function run() {
         const profileDataCollection = client.db('final-project').collection('profiles');
         const userCollection = client.db('final-project').collection('users');
 
+        /* -----------------------------------------------------------------------------------
+            .............APIs for Handling all users abd admin..........
+        ---------------------------------------------------------------------------------- */
         // New User Creation : (for admin making)
         app.put('/users/:email', async (req, res) => {
             const { email } = req.params.email;
@@ -41,6 +44,7 @@ async function run() {
             res.send(result);
         });
 
+        // Getting all users: (Shown at make an admin route in dashboard)
         app.get('/all-users', async (req, res) => {
             const allUsers = await userCollection.find().toArray();
             res.send(allUsers);
@@ -57,13 +61,19 @@ async function run() {
 
             res.send(result);
         });
+        /* ---------------------------------------------End----------------------------------------------------------------------- */
 
+
+        /* --------------------------------------------------------------------------------------
+                       ....APIs for handling all products in the website.........
+        ---------------------------------------------------------------------------------------- */
         // Getting all Products: (Shown at home page) 
         app.get('/products', async (req, res) => {
             const products = await productCollection.find({}).toArray();
 
             res.send(products);
         });
+
         // Getting a single product from all products: ( shown at purchase route/page. click on purchase btn at home page)
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
@@ -72,8 +82,20 @@ async function run() {
             res.send(oneProduct);
         });
 
+        // Posting a product from Dashboard ( Which will bw shown at home page )
+        app.post('/products', async (req, res) => {
+            const products = req.body;
+            const result = await productCollection.insertOne(products);
+
+            res.send(result);
+        });
+        /* ------------------------------------------------End------------------------------------------------ */
 
 
+
+        /* ---------------------------------------------------------------------------------------------------------
+              ..........APIs for purchase products from the product collection...............
+        ----------------------------------------------------------------------------------------------------*/
         // Posting user's purchased information to DB : ( Shown at purchaseData collection in mongoDB)
         app.post('/purchase', async (req, res) => {
             const purchaseData = req.body;
@@ -96,16 +118,18 @@ async function run() {
             res.send(result);
         });
 
+        // Payment of a single purchased item : 
         app.get('/purchase/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const oneProductPayment = await purchaseDataCollection.findOne(query);
             res.send(oneProductPayment);
         });
+        /* -----------------------------------------------------End------------------------------------------------------------------------- */
 
 
 
-
+        /* --------------------------APIs for reviews from users------------------------- */
         // Getting all review: ( shown at home page )
         app.get('/reviews', async (req, res) => {
             const reviewData = await reviewCollection.find({}).toArray();
@@ -119,9 +143,10 @@ async function run() {
 
             res.send(result);
         });
+        /* --------------------------------------------End------------------------------------------------------------------------- */
 
 
-
+        /* --------------APIs for storing detail information about users (This extra info. is not shown at UI as per requirement)------------ */
         // Posting User's detail profile information to profileData collection in mongoDB
         app.post('/profile-info', async (req, res) => {
             const profileData = req.body;
@@ -135,6 +160,7 @@ async function run() {
 
             res.send(result);
         });
+        /* ------------------------------------------------End------------------------------------------------------------------------------ */
 
 
     }
