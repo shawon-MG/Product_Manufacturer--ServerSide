@@ -50,6 +50,13 @@ async function run() {
             res.send(allUsers);
         });
 
+        app.get('/all-user', async (req, res) => {
+            console.log(req.query.email);
+
+            const allUsers = await purchaseDataCollection.find({ userEmail: req.query.email }).toArray();
+            res.send(allUsers);
+        });
+
         // Making a user Admin from all users: 
         app.put('/users/admin/:email', async (req, res) => {
             const email = req.params.email;
@@ -57,9 +64,22 @@ async function run() {
             const updateDoc = {
                 $set: { role: 'admin' }
             };
-            const result = await userCollection.updateOne(filter, updateDoc);
+            if (email === 'admin@gmail.com') {
+                const result = await userCollection.updateOne(filter, updateDoc);
 
-            res.send(result);
+                res.send(result);
+            }
+            else {
+                res.send({ message: 'Not Authoraized' })
+            };
+        });
+
+        app.get('/users/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await userCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+
+            res.send({ admin: isAdmin });
         });
         /* ---------------------------------------------End----------------------------------------------------------------------- */
 
@@ -77,18 +97,26 @@ async function run() {
         // Getting a single product from all products: ( shown at purchase route/page. click on purchase btn at home page)
         app.get('/products/:id', async (req, res) => {
             const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const oneProduct = await productCollection.findOne(query);
+            const filter = { _id: ObjectId(id) };
+            const oneProduct = await productCollection.findOne(filter);
             res.send(oneProduct);
         });
 
-        // Posting a product from Dashboard ( Which will bw shown at home page )
+        // Posting a product from Dashboard Shown at Home page ( Only an admin can do this. )
         app.post('/products', async (req, res) => {
             const products = req.body;
             const result = await productCollection.insertOne(products);
 
             res.send(result);
         });
+        // Delete a product from DB ( Only an admin can do this )
+        app.delete('/products/:id', async (req, res) => {
+            const { id } = req.params;
+            const filter = { _id: ObjectId(id) };
+            const result = await productCollection.deleteOne(filter);
+
+            res.send(result);
+        })
         /* ------------------------------------------------End------------------------------------------------ */
 
 
