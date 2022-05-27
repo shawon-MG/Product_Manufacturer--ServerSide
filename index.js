@@ -27,6 +27,20 @@ async function run() {
         const reviewCollection = client.db('final-project').collection('reviews');
         const purchaseDataCollection = client.db('final-project').collection('purchaseProducts');
         const profileDataCollection = client.db('final-project').collection('profiles');
+        const userCollection = client.db('final-project').collection('users');
+
+        // New User Creation : (for admin making)
+        app.put('/users/:email', async (req, res) => {
+            const { email } = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = { $set: user };
+            const result = await userCollection.updateOne(filter, updateDoc, options);
+
+            res.send(result);
+        });
+
 
         // Getting all Products: (Shown at home page) 
         app.get('/products', async (req, res) => {
