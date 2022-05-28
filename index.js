@@ -10,8 +10,15 @@ require('dotenv').config();
 const cors = require('cors');
 
 // MiddleWare :
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
+app.use(
+    cors({
+        origin: true,
+        optionsSuccessStatus: 200,
+        credentials: true,
+    })
+);
 
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster2.xd9lnfn.mongodb.net/?retryWrites=true&w=majority`;
